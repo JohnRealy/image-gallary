@@ -1,10 +1,10 @@
 @keyframes spinner-line-fade-more {
   0%,
   100% {
-    непрозорість: 0; /* мінімальна непрозорість */
+    opacity: 0; /* minimum opacity */
   }
   1% {
-    непрозорість: 1;
+    opacity: 1;
   }
 }
 
@@ -12,20 +12,20 @@
   0%,
   39%,
   100% {
-    непрозорість: 0, 25; /* мінімальна непрозорість */
+    opacity: 0.25; /* minimum opacity */
   }
   40% {
-    непрозорість: 1;
+    opacity: 1;
   }
 }
 
 @keyframes spinner-line-fade-default {
   0%,
   100% {
-    непрозорість: 0, 22; /* мінімальна непрозорість */
+    opacity: 0.22; /* minimum opacity */
   }
   1% {
-    непрозорість: 1;
+    opacity: 1;
   }
 }
 
@@ -33,12 +33,12 @@
   0%,
   25%,
   100% {
-    /* мінімальний масштаб і непрозорість */
-    перетворення: масштаб (0, 5);
-    непрозорість: 0, 25;
+    /* minimum scale and opacity */
+    transform: scale(0.5);
+    opacity: 0.25;
   }
   26% {
-    перетворення: scale(1);
-    непрозорість: 1;
+    transform: scale(1);
+    opacity: 1;
   }
 }

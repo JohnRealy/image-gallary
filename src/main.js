@@ -10,7 +10,9 @@ import { createMarkup } from './js/create-markup';
 const form = document.querySelector('.js-search-form');
 const list = document.querySelector('.js-gallery');
 const target = document.querySelector('.js-backdrop');
+const loadMorebtn = document.querySelector('.js-load-more');
 form.addEventListener('submit', handleSubmit);
+loadMorebtn.addEventListener('click', handleClick);
 
 const opts = {
   lines: 9, // The number of lines to draw
@@ -34,15 +36,19 @@ const opts = {
 };
 
 const spiner = new Spinner(opts);
+let page = 1;
+let searchQuery = '';
 
 function handleSubmit(e) {
   e.preventDefault();
   spinerPlay();
-  const searchQuery = e.target['user-search-query'].value.trim();
-  getPhotos(searchQuery, 1)
+  list.innerHTML = '';
+  page = 1;
+  searchQuery = e.target['user-search-query'].value.trim();
+  getPhotos(searchQuery, page)
     .then(res => {
       if (res.results.length === 0) {
-        list.innerHTML = '';
+        loadMorebtn.classList.add('is-hidden');
         return iziToast.error({
           message:
             'Sorry, there are no images matching your search query. Please try again!',
@@ -50,6 +56,9 @@ function handleSubmit(e) {
         });
       }
       list.innerHTML = createMarkup(res.results);
+      if (res.total > 12) {
+        loadMorebtn.classList.remove('is-hidden');
+      }
     })
     .catch(error => {
       console.log(error);
@@ -67,4 +76,36 @@ function spinerPlay() {
 function spinerStop() {
   spiner.stop();
   target.classList.add('is-hidden');
+}
+
+function handleClick() {
+  spinerPlay();
+  page += 1;
+  getPhotos(searchQuery, page)
+    .then(res => {
+      console.log(res.total);
+      const lastPage = Math.ceil(res.total / 12);
+      list.insertAdjacentHTML('beforeend', createMarkup(res.results));
+      const { height: cardHeight } = document
+        .querySelector('.gallery')
+        .firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
+      if (lastPage === page) {
+        loadMorebtn.classList.add('is-hidden');
+        iziToast.info({
+          message: "We're sorry, but you've reached the end of search results.",
+          position: 'topLeft',
+        });
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    })
+    .finally(() => {
+      spinerStop();
+    });
 }
